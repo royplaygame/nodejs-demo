@@ -13,8 +13,12 @@ const app = express();
 // app.all('/good', (req, res) => res.send('Hello World! 你好同学们！'));
 
 //  请求方法确定，路径第一部分只要匹配即可，正则表达式解决
-app.get(/^\/index(\/.+)*$/,(req, res) => res.send('Hello World! 你好同学们！'));
+//app.get(/^\/index(\/.+)*$/,(req, res) => res.send('Hello World! 你好同学们！'));
 
+// 通过req.params获取路由中的参数
+app.get('/news/:year/:month/:day', function (req, res) {
+    res.send(req.params)
+})
 
 
 // 启动服务
