@@ -1,44 +1,19 @@
 // news 模块的增删改查
-const mysql = require('mysql')
-
-// 连接配置
-const pool = mysql.createPool({
-    host: '192.168.56.102',
-    port: '3306',
-    user: 'root',
-    password: 'luoyang',
-    database: 'node',
-    timezone: "08:00"
-})
-
-function getData(sql, ...params) {
-    return new Promise((resolve, reject) => {
-        pool.getConnection(function (err, conn) {
-            if (err) {
-                reject(err);
-                return;
-            }
-            conn.query(sql, params, function (err, data) {
-                conn.release();
-                if (err) {
-                    reject(err);
-                    return;
-                }
-                resolve(data);
-            })
-        })
-    })
-}
+const MongoClient = require('mongodb').MongoClient;
+const url = "mongodb://localhost:27017/node"
 
 
 // 查询所有news总数量
 module.exports.getTotal = function () {
     return new Promise((resolve, reject) => {
-        let sql = "select count(*) as total from news"
-        getData(sql).then((res) => {
-            resolve(res[0])
-        }, (err) => {
-            reject(err)
+        MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
+            if (err) throw err;
+            const dbase = db.db('node');
+            dbase.collection('news').find({}).toArray(function (err, result) {
+                if (err) reject(err);
+                db.close();
+                resolve(result.length)
+            });
         })
     })
 }
@@ -47,11 +22,15 @@ module.exports.getTotal = function () {
 // 分页查询news
 module.exports.getPage = function (page) {
     return new Promise((resolve, reject) => {
-        const sql = "select * from news order by newsId limit ?,?"
-        getData(sql, (page - 1) * 10, 10).then((res) => {
-            resolve(res)
-        }, (err) => {
-            reject(err)
+        MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
+            if (err) throw err;
+            const dbase = db.db('node');
+            dbase.collection('news').find().skip((page - 1) * 10).limit(10).toArray(function (err, result) {
+                if (err) reject(err);
+                db.close();
+                resolve(result)
+
+            });
         })
     })
 }
@@ -60,11 +39,15 @@ module.exports.getPage = function (page) {
 //根据newsId查询news
 module.exports.findById = function (newsId) {
     return new Promise((resolve, reject) => {
-        const sql = "select * from news where newsId = ?"
-        getData(sql, newsId).then((res) => {
-            resolve(res)
-        }, (err) => {
-            reject(err)
+        MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
+            if (err) throw err;
+            const dbase = db.db('node');
+            const findObj = {"newsId": parseInt(newsId)};
+            dbase.collection('news').find(findObj).toArray(function (err, result) {
+                if (err) reject(err);
+                db.close();
+                resolve(result)
+            });
         })
     })
 }
@@ -72,13 +55,22 @@ module.exports.findById = function (newsId) {
 //添加news
 module.exports.addNews = function (newsObj) {
     return new Promise((resolve, reject) => {
-        const sql = "insert into news(title,newsUrl,content,pdate) values(?,?,?,now())"
-        getData(sql, newsObj.title, newsObj.newsUrl, newsObj.content).then((res) => {
-            console.log("===1=")
-            resolve(true)
-        }, (err) => {
-            console.log("===2=")
-            reject(err)
+        MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
+            if (err) throw err;
+            const dbase = db.db('node');
+            const {title, newsUrl, content} = newsObj;
+            const findObj = {
+                newsId: parseInt(Date.now().toString()),
+                title: newsObj.title,
+                newsUrl: newsObj.newsUrl,
+                content: newsObj.content,
+                pDate: new Date()
+            };
+            dbase.collection('news').insertOne(findObj, function (err, result) {
+                if (err) reject(err);
+                db.close();
+                resolve(result)
+            });
         })
     })
 }
@@ -87,11 +79,24 @@ module.exports.addNews = function (newsObj) {
 //修改news
 module.exports.updNews = function (newsObj) {
     return new Promise((resolve, reject) => {
-        const sql = "update news set title=?,newsUrl=?,content=?,pdate=now() where newsId=?"
-        getData(sql, newsObj.title, newsObj.newsUrl, newsObj.content, newsObj.newsId).then((res) => {
-            resolve(true)
-        }, (err) => {
-            reject(err)
+        MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
+            if (err) throw err;
+            const dbase = db.db('node');
+            const findObj = {"newsId": parseInt(newsObj.newsId)};
+            const Obj = {
+                $set: {
+                    newsId: parseInt(newsObj.newsId),
+                    title: newsObj.title,
+                    newsUrl: newsObj.newsUrl,
+                    content: newsObj.content,
+                    pDate: new Date()
+                }
+            };
+            dbase.collection('news').updateOne(findObj, Obj, function (err, result) {
+                if (err) reject(err);
+                db.close();
+                resolve(result)
+            });
         })
     })
 }
@@ -100,12 +105,26 @@ module.exports.updNews = function (newsObj) {
 // 删除news
 module.exports.delNews = function (newsId) {
     return new Promise((resolve, reject) => {
-        const sql = "delete from news where newsId=?"
-        getData(sql, newsId).then((res) => {
-            resolve(true)
-        }, (err) => {
-            reject(err)
+        MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
+            if (err) throw err;
+            const dbase = db.db('node');
+            const findObj = {"newsId": parseInt(newsId)};
+            dbase.collection('news').deleteOne(findObj, function (err, result) {
+                if (err) reject(err);
+                db.close();
+                resolve(result)
+            });
         })
     })
 }
 
+function getNextSequence(name, db) {
+    var ret = db.counters.findAndModify(
+        {
+            query: {_id: name},
+            update: {$inc: {seq: 1}},
+            new: true
+        }
+    );
+    return ret.seq;
+}

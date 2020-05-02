@@ -19,7 +19,7 @@ module.exports.index = function (req, res) {
     // 读取数据
     getTotal().then((data) => {
         // 获取总页数，当前页数据
-        const total = data.total % 10 == 0 ? parseInt(data.total / 10) : parseInt(data.total / 10 + 1);
+        const total = data % 10 == 0 ? parseInt(data / 10) : parseInt(data / 10 + 1);
         if (page < 1) {
             page = 1
         } else if (page >= total) {
