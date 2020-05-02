@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新闻项目</title>
+    <link href="../public/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../public/css/layer.css" rel="stylesheet">
+    <script src="../public/js/jquery-1.11.1.min.js"></script>
+    <script src="../public/js/bootstrap.min.js"></script>
+    <script src="../public/js/moment.js"></script>
+    <script src="../public/js/layer.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="navbar navbar-default">
+        <ul class="nav nav-pills">
+            <li><a href="/index.html">新闻列表</a></li>
+            <li><a href="/addNews.html">添加新闻</a></li>
+        </ul>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">新闻列表</div>
+        <div class="panel-body">
+            <table class="table table-hover table-bordered table-striped">
+                <tr>
+                    <th>新闻编号</th>
+                    <th>新闻标题</th>
+                    <th>新闻详情</th>
+                    <th>发布日期</th>
+                    <th colspan="2">操作</th>
+                </tr>
+                <% for(var i=0; i < list.length; i++) {%>
+                <tr>
+                    <td><%= (i+1)%></td>
+                    <td><a href="<%= list[i].newsUrl%>" class="poptips"><%= list[i].title%></a></td>
+                    <td><a href="/newsDetail.html?newsId=<%= list[i].newsId %>">查看新闻详情</a></td>
+                    <td class="date"><%=list[i].pDate %></td>
+                    <td><a href="/upd.html?page=<%= curPage%>&newsId=<%= list[i].newsId %>">修改</a></td>
+                    <td><a href="/del.html?page=<%= curPage%>&newsId=<%= list[i].newsId %>" class="delNews">删除</a></td>
+                </tr>
+                <%}%>
+            </table>
+        </div>
+        <div class="panel-footer" style="text-align: center">
+            <ul class="pagination pagination-lg">
+                <li>
+                    <a href="/index.html/<%= curPage-1%>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <% for(let j=0; j< total; j++) {%>
+                <li><a href="/index.html/<%= j+1%>"><%= j+1%></a></li>
+                <%}%>
+                <li>
+                    <a href="/index.html/<%= curPage+1%>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <script>
+        $(function () {
+            Array.from($(".date")).forEach(function (item) {
+                const cdate = item.innerHTML === "" ? Date.now() : new Date(item.innerHTML)
+                item.innerHTML = moment(cdate).format("YYYY-MM-DD")
+            })
+
+            $(".delNews").click(function (e) {
+                e.preventDefault();
+                //var that=this;
+                layer.confirm('你确定要删除这条记录吗？', {
+                    btn: ['确定','取消'] //按钮
+                }, ()=>{
+                    location.href=this.href;
+                });
+            })
+        })
+    </script>
+</div>
+</body>
+</html>
