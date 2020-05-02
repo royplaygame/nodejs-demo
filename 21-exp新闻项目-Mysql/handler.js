@@ -103,7 +103,6 @@ module.exports.detail = function (req, res) {
 module.exports.doUpd = function (req, res) {
     const {newsId, title, newsUrl, content} = req.body;
     const news = {title, newsUrl, content,newsId};
-    console.log(news)
     updNews(news).then((result) => {
         res.redirect('/index.html')
     }, (err) => {

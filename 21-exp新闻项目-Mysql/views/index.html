@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <title>新闻项目</title>
     <link href="../public/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../public/css/layer.css" rel="stylesheet">
     <script src="../public/js/jquery-1.11.1.min.js"></script>
     <script src="../public/js/bootstrap.min.js"></script>
     <script src="../public/js/moment.js"></script>
+    <script src="../public/js/layer.js"></script>
 </head>
 <body>
 <div class="container">
@@ -34,7 +36,7 @@
                     <td><a href="/newsDetail.html?newsId=<%= list[i].newsId %>">查看新闻详情</a></td>
                     <td class="date"><%=list[i].pDate %></td>
                     <td><a href="/upd.html?page=<%= curPage%>&newsId=<%= list[i].newsId %>">修改</a></td>
-                    <td><a href="/del.html?page=<%= curPage%>&newsId=<%= list[i].newsId %>">删除</a></td>
+                    <td><a href="/del.html?page=<%= curPage%>&newsId=<%= list[i].newsId %>" class="delNews">删除</a></td>
                 </tr>
                 <%}%>
             </table>
@@ -64,6 +66,16 @@
             Array.from($(".date")).forEach(function (item) {
                 const cdate = item.innerHTML === "" ? Date.now() : new Date(item.innerHTML)
                 item.innerHTML = moment(cdate).format("YYYY-MM-DD")
+            })
+
+            $(".delNews").click(function (e) {
+                e.preventDefault();
+                var that=this;
+                layer.confirm('你确定要删除这条记录吗？', {
+                    btn: ['确定','取消'] //按钮
+                }, ()=>{
+                    location.href=this.href;
+                });
             })
         })
     </script>
