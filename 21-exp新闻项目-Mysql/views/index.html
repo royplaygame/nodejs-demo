@@ -31,10 +31,10 @@
                 <tr>
                     <td><%= (i+1)%></td>
                     <td><a href="<%= list[i].newsUrl%>" class="poptips"><%= list[i].title%></a></td>
-                    <td><a href="/newsDetail.html?newsId=<%= i %>">查看新闻详情</a></td>
+                    <td><a href="/newsDetail.html?newsId=<%= list[i].newsId %>">查看新闻详情</a></td>
                     <td class="date"><%=list[i].pDate %></td>
-                    <td><a href="/upd.html?page=<%= curPage%>&newsId=<%= i %>">修改</a></td>
-                    <td><a href="/del.html?page=<%= curPage%>&newsId=<%= i %>">删除</a></td>
+                    <td><a href="/upd.html?page=<%= curPage%>&newsId=<%= list[i].newsId %>">修改</a></td>
+                    <td><a href="/del.html?page=<%= curPage%>&newsId=<%= list[i].newsId %>">删除</a></td>
                 </tr>
                 <%}%>
             </table>

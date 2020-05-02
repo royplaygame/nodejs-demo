@@ -31,61 +31,81 @@ function getData(sql, ...params) {
 }
 
 
-module.exports.getData = getData
-
-// 查询所有news
-/*let sql = "select * from news"
-getData(sql).then((res) => {
-    console.log(res.length)
-}, (err) => {
-    console.log(err)
-})*/
+// 查询所有news总数量
+module.exports.getTotal = function () {
+    return new Promise((resolve, reject) => {
+        let sql = "select count(*) as total from news"
+        getData(sql).then((res) => {
+            resolve(res[0])
+        }, (err) => {
+            reject(err)
+        })
+    })
+}
 
 
 // 分页查询news
-/*
-const sql = "select * from news order by newsId limit ?,?"
-getData(sql, 5,5).then((res) => {
-    console.log(res.length)
-}, (err) => {
-    console.log(err)
-})*/
+module.exports.getPage = function (page) {
+    return new Promise((resolve, reject) => {
+        const sql = "select * from news order by newsId limit ?,?"
+        getData(sql, (page - 1) * 10, 10).then((res) => {
+            resolve(res)
+        }, (err) => {
+            reject(err)
+        })
+    })
+}
+
 
 //根据newsId查询news
-/*
-cosnt sql = "select * from news where newsId = ?"
-getData(sql, 1005).then((res) => {
-    console.log(res)
-}, (err) => {
-    console.log(err)
-})*/
-
+module.exports.findById = function (newsId) {
+    return new Promise((resolve, reject) => {
+        const sql = "select * from news where newsId = ?"
+        getData(sql, newsId).then((res) => {
+            resolve(res)
+        }, (err) => {
+            reject(err)
+        })
+    })
+}
 
 //添加news
-/*
-const sql = "insert into news(title,newsUrl,content,pdate) values(?,?,?,now())"
-getData(sql, 'mytitle', 'http://www.baidu.com', 'baidu.com').then((res) => {
-    console.log(res)
-}, (err) => {
-    console.log(err)
-})*/
+module.exports.addNews = function (newsObj) {
+    return new Promise((resolve, reject) => {
+        const sql = "insert into news(title,newsUrl,content,pdate) values(?,?,?,now())"
+        getData(sql, newsObj.title, newsObj.newsUrl, newsObj.content).then((res) => {
+            console.log("===1=")
+            resolve(true)
+        }, (err) => {
+            console.log("===2=")
+            reject(err)
+        })
+    })
+}
 
 
 //修改news
-/*
-const sql = "update news set title=?,newsUrl=?,content=?,pdate=now() where newsId=?"
-getData(sql, '测试', 'http://www.test.com', '测试之家', 1022).then((res) => {
-    console.log(res)
-}, (err) => {
-    console.log(err)
-})*/
-
+module.exports.updNews = function (newsObj) {
+    return new Promise((resolve, reject) => {
+        const sql = "update news set title=?,newsUrl=?,content=?,pdate=now() where newsId=?"
+        getData(sql, newsObj.title, newsObj.newsUrl, newsObj.content, newsObj.newsId).then((res) => {
+            resolve(true)
+        }, (err) => {
+            reject(err)
+        })
+    })
+}
 
 
 // 删除news
-const sql = "delete from news where newsId=?"
-getData(sql, 1022).then((res) => {
-    console.log(res)
-}, (err) => {
-    console.log(err)
-})
+module.exports.delNews = function (newsId) {
+    return new Promise((resolve, reject) => {
+        const sql = "delete from news where newsId=?"
+        getData(sql, newsId).then((res) => {
+            resolve(true)
+        }, (err) => {
+            reject(err)
+        })
+    })
+}
+
