@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>新闻项目</title>
+    <link href="../public/css/bootstrap.min.css" rel="stylesheet">
+    <script src="../public/js/jquery-1.11.1.min.js"></script>
+    <script src="../public/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="navbar navbar-default">
+        <ul class="nav nav-pills">
+            <li><a href="/index.html">新闻列表</a></li>
+            <li><a href="/addNews.html">添加新闻</a></li>
+        </ul>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">新闻标题： <%= news.title%></li>
+        <li class="list-group-item">新闻URL： <%= news.newsUrl%></li>
+        <li class="list-group-item">新闻详情： <%= news.content%></li>
+    </ul>
+</div>
+</body>
+</html>
