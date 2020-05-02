@@ -207,7 +207,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
 })*/
 
 // 使用 $lookup 来实现左连接
-MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
+/*MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
     const dbase = db.db('node');
     dbase.collection('orders').aggregate([
         {
@@ -223,4 +223,7 @@ MongoClient.connect(url, {useUnifiedTopology: true}, function (err, db) {
         console.log(JSON.stringify(result))
         db.close()
     })
-})
+})*/
+
+
+// 初始化news
