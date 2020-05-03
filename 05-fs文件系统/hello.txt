@@ -1,1 +1,1 @@
-hello word!中国你好，中华人民共和国
+offset 决定 buffer 中要被写入的部位， length 是一个整数，指定要写入的字节数
